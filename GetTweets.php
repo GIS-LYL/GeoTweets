@@ -1,12 +1,25 @@
 <?php
-//?east=1&south=2&west=3&north=4
+/* Get Params from post request */
 $bounds = [
     'east' => $_POST['east'],
     'south' => $_POST['south'],
     'west' => $_POST['west'],
     'north' => $_POST['north']
 ];
-//print_r($bounds);
+
+/* Create a connection to database */
+$connection = new MongoClient();
+$collection = $connection->test->restaurants;
+
+//var_dump( $collection->findOne() );
+$query = [ 'grades' => [ '$elemMatch' => [ 'score' => [ '$gt' => 20 ] ] ] ];
+$fields = [ '_id' => 0, 'address.zipcode' => 1 ];
+$cursor = $collection->find( $query, $fields )->limit(5);
+
+while ( $cursor->hasNext() )
+{
+    ?><p><?php var_dump( $cursor->getNext() ); ?></p><?php
+}
 
 $geoJson = '{
   "type": "FeatureCollection",
@@ -95,6 +108,6 @@ $geoJson = '{
   ],
   "id": "tweetsyoulike.c22ab257"
 }';
-echo $geoJson;
+//echo $geoJson;
 
 ?>

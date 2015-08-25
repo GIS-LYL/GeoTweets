@@ -3,21 +3,22 @@
 <html lang="en">
 <body>
     <button>Submit</button>
+    <div></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
     <script>
-        $("button").click(function(){
+        $( "button" ).click( function() {
             $.ajax({
-                type: 'post',
+                type: "post",
                 url: "GetTweets.php",
-                dataType: 'json',
+                dataType: "html",
                 data: {
                     east: 1,
                     south: 2,
                     west: 3,
                     north: 4
                 },
-                success: function(data, status){
-                    alert( data["type"] );
+                success: function( data, status ) {
+                    $( "div" ).html( data );
                 }
             });
         });
