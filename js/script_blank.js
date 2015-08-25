@@ -23,6 +23,33 @@ var map = L.mapbox.map('map', 'tweetsyoulike.mpo7h6lm',{
         'High Contrast':L.mapbox.tileLayer('mapbox.high-contrast')     
     }).addTo(map);
 
+map.on('moveend',getBounds);
+
+function getBounds(e)
+{
+    var bounds = map.getBounds();
+    var boundsObject = {
+        west: bounds.getWest(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        north: bounds.getNorth()
+    };
+
+    $.ajax({
+        type:'post',
+        url:'GetTweets.php',
+        dataType:'json',
+        data: boundsObject,
+        success:function(data){
+            printDataToMap(data)
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            alert(errorThrown);
+        }
+    });
+}
+
+    function printDataToMap(data){
     function makeGroup(tweets, domain)
     {
         var f1 = new Array();
@@ -96,6 +123,7 @@ var map = L.mapbox.map('map', 'tweetsyoulike.mpo7h6lm',{
         map.addLayer(clusterGroups[i]);
 
 
+    }
     }
 //ClusterLayers and GeoJson    
 //var clusterGroup = new L.MarkerClusterGroup();
