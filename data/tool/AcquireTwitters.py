@@ -16,7 +16,7 @@ class GeoTweetsListener(StreamListener):
         StreamListener.__init__(self)
         self.dataAmount = 0
         self.client = MongoClient()
-        self.twitterCollection = self.client.test.Twitter
+        self.twitterCollection = self.client.test.twitters
         # for text preprocessing
         self.wordMacher = re.compile(r'[a-z]+')
         self.urlMacher = re.compile(r'http[s]?://[\S]+')
