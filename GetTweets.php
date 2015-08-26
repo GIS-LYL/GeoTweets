@@ -9,7 +9,7 @@ $bounds = [
 
 /* Create a connection to database */
 $connection = new MongoClient();
-$collection = $connection->test->restaurants;
+$collection = $connection->test->Twitter;
 
 //var_dump( $collection->findOne() );
 $query = [ 'grades' => [ '$elemMatch' => [ 'score' => [ '$gt' => 20 ] ] ] ];
@@ -22,91 +22,55 @@ while ( $cursor->hasNext() )
 }
 
 $geoJson = '{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "marker-icghioki2",
-        "time": "2015-08-10",
-        "name": "Lenard",
-        "text": "fuck the world",
-        "location": "CA",
-        "media_url":"",
-        "importance":{
-            "Cuture":"0",
-            "Sports":"0",
-            "Economy":"0.1"
+    "type": "FeatureCollection",
+    "features": [{
+        "geometry": {
+            "type": "Point",
+            "coordinates": [-72.26518, 18.579273]
         },
-        "marker-size": "medium",
-        "marker-color": "#7ec9b1",
-        "marker-symbol": "3"
-      },
-      "geometry": {
-        "coordinates": [
-          -118.249282,
-          33.983794
-        ],
-        "type": "Point"
-      },
-      "id": "096f93dfc47a3bbb093384b1b03c6211"
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "marker-icghioki2",
-        "time": "2015-08-10",
-        "name": "Lenard",
-        "text": "fuck the world",
-        "location": "CA",
-        "media_url":"",
-        "importance":{
-            "Cuture":"0",
-            "Sports":"0",
-            "Economy":"0.1"
+        "type": "Feature",
+        "id": "55cd1bc05882980ff072054b",
+        "properties": {
+            "marker-color": "#7ec9b1",
+            "name": "I am Flore H Edouard",
+            "marker-symbol": "3",
+            "time": "Thu Aug 13 22:35:45 +0000 2015",
+            "importance": {
+                "Science": 0,
+                "Health": 0.2995732273553991,
+                "Sports": 0
+            },
+            "text": "Sweat is body fat crying right??? (@ Boulevard Fitness) https://t.co/rbRHRxzqjG",
+            "marker-size": "medium",
+            "media_url": [],
+            "id": "55cd1bc05882980ff072054b",
+            "location": "Haiti Cherie"
+        }
+    }, {
+        "geometry": {
+            "type": "Point",
+            "coordinates": [120.856705, 14.414455]
         },
-        "marker-size": "medium",
-        "marker-color": "#7ec9b1",
-        "marker-symbol": "3"
-      },
-      "geometry": {
-        "coordinates": [
-          -118.368759,
-          33.945638
-        ],
-        "type": "Point"
-      },
-      "id": "415624e6791d0488c0526439d8443b77"
-    },
-    {
-     "type": "Feature",
-      "properties": {
-        "id": "marker-icghioki2",
-        "time": "2015-08-10",
-        "name": "Lenard",
-        "text": "fuck the world",
-        "location": "CA",
-        "media_url":"",
-        "importance":{
-            "Cuture":"0",
-            "Sports":"0",
-            "Economy":"0.1"
-        },
-        "marker-size": "medium",
-        "marker-color": "#7ec9b1",
-        "marker-symbol": "3"
-      },
-      "geometry": {
-        "coordinates": [
-          -118.31726,
-          34.037297
-        ],
-        "type": "Point"
-      },
-      "id": "f781393661de78d8b7f36025535298c6"
-    }
-  ],
-  "id": "tweetsyoulike.c22ab257"
+        "type": "Feature",
+        "id": "55cd1bc45882980ff072054c",
+        "properties": {
+            "marker-color": "#7ec9b1",
+            "name": "jayzee guevarra",
+            "marker-symbol": "3",
+            "time": "Thu Aug 13 22:35:49 +0000 2015",
+            "importance": {
+                "Science": 0,
+                "Health": 0.2995732273553991,
+                "Sports": 0
+            },
+            "text": "Sweat is body fat crying right??? (@ Boulevard Fitness) https://t.co/rbRHRxzqjG",
+            "marker-size": "medium",
+            "media_url": [],
+            "id": "55cd1bc05882980ff072054b",
+            "location": "Haiti Cherie"
+        }
+    }],
+    "id": "tweetsyoulike.c22ab257"
 }';
 //echo $geoJson;
 
