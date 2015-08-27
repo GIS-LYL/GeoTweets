@@ -3,32 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <title>GeoJson Test</title>
-
+    
     <!--Mapbox-->
     <link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
-
+    
     <!--Bootstrap-->
-    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' rel='stylesheet' />
+    <link href='https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cosmo/bootstrap.min.css' rel='stylesheet' />
 
     <!--Main Work Space-->
-    <link href='css/style_blank.css' rel='stylesheet' />
-
+    <link href='css/style_blank.css' rel='stylesheet' />    
+    
     <!--Google format-->
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
-
+    
     <!--Plugins-->
     <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
     <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
     <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
     <link href='http://makinacorpus.github.io/Leaflet.FileLayer/Font-Awesome/css/font-awesome.min.css' rel='stylesheet' />
-
+    
+    
+    
+    
 </head>
 
 <body>
 
-<div class="header">
-    <h1 class="header"id="tweetsYoulike">TweetsYouLike</h1>
-</div>
+<nav class="navbar navbar-default" id="Geo-navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="https://github.com/GIS-LYL/GeoTweets">GeoTweets</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="https://github.com/GIS-LYL">LYL</a></li>
+        <li><a href="http://www.usc.edu/">USC</a></li>
+        <li><a href="http://spatial.usc.edu/">Spatial Science</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Domain <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Health</a></li>
+            <li><a href="#">Sports</a></li>
+            <li><a href="#">History</a></li>
+            <li><a href="#">new domain1</a></li>
+            <li><a href="#">new domain2</a></li>
+          </ul>
+        </li>
+      </ul>
+        <form class="navbar-form navbar-right" role="search" id="Geo-form">
+            <div class="form-group">
+              <input type="date" value="2015-08-25" class="form-control" id="Geo-from">
+              <input type="date" value="2015-08-26" class="form-control" id="Geo-to">
+            </div>
+            <button type="submit" class="btn btn-default" id="Geo-submit">Submit</button>
+        </form>
+    </div>
+  </div>
+</nav>
+    
+    <div id = "map"></div>
 
 <?php
 $domain = "";
@@ -37,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     $domain = $_POST['domains'];
     //echo $domain;
 }
-
 ?>
 
 <form method = "post" action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -51,7 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
 
 
-<div id="map"></div>
 
 <!--jQuery-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
