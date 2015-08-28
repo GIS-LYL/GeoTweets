@@ -30,60 +30,39 @@
 <body>
 
 <nav class="navbar navbar-default" id="Geo-navbar">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="https://github.com/GIS-LYL/GeoTweets">GeoTweets</a>
-    </div>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="https://github.com/GIS-LYL/GeoTweets">GeoTweets</a>
+        </div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li><a href="https://github.com/GIS-LYL">LYL</a></li>
-        <li><a href="http://www.usc.edu/">USC</a></li>
-        <li><a href="http://spatial.usc.edu/">Spatial Science</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Domain <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Health</a></li>
-            <li><a href="#">Sports</a></li>
-            <li><a href="#">History</a></li>
-            <li><a href="#">new domain1</a></li>
-            <li><a href="#">new domain2</a></li>
-          </ul>
-        </li>
-      </ul>
-        <form class="navbar-form navbar-right" role="search" id="Geo-form">
-            <div class="form-group">
-              <input type="date" value="2015-08-25" class="form-control" id="Geo-from">
-              <input type="date" value="2015-08-26" class="form-control" id="Geo-to">
-            </div>
-            <button type="submit" class="btn btn-default" id="Geo-submit">Submit</button>
-        </form>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="https://github.com/GIS-LYL">LYL</a></li>
+                <li><a href="http://www.usc.edu/">USC</a></li>
+                <li><a href="http://spatial.usc.edu/">Spatial Science</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Domain <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu" id="Geo-domain">
+                        <li class="active"><a href="#" id="Geo-health">Health</a></li>
+                        <li><a href="#" id="Geo-sports">Sports</a></li>
+                        <li><a href="#" id="Geo-history">History</a></li>
+                        <li><a href="#" id="Geo-new-domain1">new domain1</a></li>
+                        <li><a href="#" id="Geo-new-domain2">new domain2</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-right" role="search" id="Geo-form">
+                <div class="form-group">
+                    <input type="date" class="form-control" id="Geo-from">
+                    <input type="date" class="form-control" id="Geo-to">
+                </div>
+                <button type="button" class="btn btn-default" id="Geo-submit">Submit</button>
+            </form>
+        </div>
     </div>
-  </div>
 </nav>
-    
-    <div id = "map"></div>
 
-<?php
-$domain = "";
-if ($_SERVER['REQUEST_METHOD'] == 'POST')
-{
-    $domain = $_POST['domains'];
-    //echo $domain;
-}
-?>
-
-<form method = "post" action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-    Domain:<select name= "domains" id="domains">
-        <option value = "Health" <?php if($domain == 'Health') echo 'selected';?>>Health</option>
-        <option value = "Science" <?php if($domain == 'Science') echo 'selected';?>>Science</option>
-        <option value = "Sports" <?php if($domain == 'Sports') echo 'selected';?>>Sports</option>
-    </select>
-    <input type="submit" name="submit" value="Submit">
-</form>
-
-
-
+<div id = "map"></div>
 
 <!--jQuery-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
