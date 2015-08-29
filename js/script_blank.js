@@ -32,9 +32,8 @@ $(document).ready(function(){
     //load the map and the tileLayers
     var map = L.mapbox.map('map', 'tweetsyoulike.mpo7h6lm',{
             minzoom: 2,
-            maxzoom: 14,
-
-        });
+            maxzoom: 14
+        }).setView([12.15147921044203, 125.15157530234822],8);
 
         L.control.layers({
             'Streets':L.mapbox.tileLayer('mapbox.streets').addTo(map),
@@ -48,7 +47,7 @@ $(document).ready(function(){
         }).addTo(map);
 
     //Bounds Query
-    map.on('moveend', FireEvents);
+ //   map.on('moveend', FireEvents);
 
     //Time Query
     $("#Geo-submit").click(FireEvents);
@@ -87,16 +86,72 @@ $(document).ready(function(){
             dataType:'json',
             data: params,
             success:function(data){
-                printDataToMap()
+                printDataToMap(data)
             },
             error:function(XMLHttpRequest, textStatus, errorThrown){
                 //alert(errorThrown);
             }
         });
     }
+    
+    function printDataToMap(data)
+    {
+        var geoJsonLayerX = L.mapbox.featureLayer();
+        geoJsonLayerX.setGeoJSON(data);
+        
+        function makeGroup(color) {
+            return new L.MarkerClusterGroup({
+                iconCreateFunction: function(cluster) {
+                    return new L.DivIcon({
+                        //iconUrl: "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png",
+                        iconSize: [30, 30],
+                        html: '<div style="text-align:center;color:#fff;background:' + color + '">' + cluster.getChildCount() + '</div>'
+                        //html: '<div style="text-align:center;backgroud:rgba(0,0,0,0.5)><img src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png">' + cluster.getChildCount() + '</div>'
+                    });
+                }
+            }).addTo(map);
+        }
+        
+        var color = [
+            '#320b12',
+            '#4b1144',
+            '#641664',
+            '#4c1c7d',
+            '#2b2296',
+            '#93bcd6',
+            '#279aaf',
+            '#3fc82d',
+            '#a5e133',
+            '#fbd639'
+        ];
+        var groups = [];
+        for(i = 0; i <= 9; i++)
+            groups.push(makeGroup(color[i]));
+        
+        geoJsonLayerX.eachLayer(function(layer){
+            var prop = layer.feature.properties;
+            var impor = prop.importance;
+            
+            groups[parseInt(impor*10)].addLayer(layer);
+            
+            var popup = "<h1>" + prop.name + "@" + prop.name + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
+                
+            layer.on('click',function(e){
+                    map.panTo(layer.getLatLng());
+            });
+            layer.bindPopup(popup);
+            layer.setIcon(L.mapbox.marker.icon({
+                    'marker-color':giveMeColor(impor),
+                    'marker-symbol':'circle-stroked',
+                    'marker-size':giveMeSize(impor)
+            }));
+        });
 
-        function printDataToMap(data){
-        function makeGroup(tweets, domain)
+        
+    }
+
+/*    function printDataToMap(data){
+        function makeGroup(tweets)
         {
             var f1 = new Array();
 
@@ -106,35 +161,36 @@ $(document).ready(function(){
             for (var i = 0; i < tweets.features.length; i++)
             {
                 var obj = tweets.features[i];
-                var impor =  obj.properties.importance[domain];
+                var impor =  obj.properties.importance;
                 f1[parseInt(impor * 10)].features.push(obj);
             }
             return f1;
         };
 
-        var color1 = [
-            'red',
-            '#114b29',
-            '#166437',
-            '#1c7d45',
-            '#229653',
-            '#93d6af',
-            '#27af61',
-            '#2dc86f',
-            '#33e17d'
+        var color = [
+            '#320b12',
+            '#4b1144',
+            '#641664',
+            '#4c1c7d',
+            '#2b2296',
+            '#93bcd6',
+            '#279aaf',
+            '#3fc82d',
+            '#a5e133',
+            '#fbd639'
         ];
         var clusterGroups = [];
         for(var i = 0; i <= 9; i++)
             clusterGroups[i] = new L.MarkerClusterGroup({
                 iconCreateFunction:function(cluster){
                     return L.mapbox.marker.icon({
-                        'marker-symbol':"marker-stroked",
-                        'marker-color':color1[i-1],
+                        'marker-symbol':cluster.getChildCount(),
+                        'marker-color':color[i-1],
                         opacity:0.5
                     });
                 }
             });
-        var exam = makeGroup(test,"Health");
+        var exam = makeGroup(data,"Health");
         for(var i = 0; i <= 9; i++)
         {
             if(i > 6)
@@ -146,22 +202,15 @@ $(document).ready(function(){
             geoJsonLayerX.eachLayer(function(locale){
                 var prop = locale.feature.properties;
                 var impor = prop.importance;
-                var popup = '<h1>' + prop.name + '</h1>' + '<h2>' + prop.location + '</h2>' + '<h2>' + prop.time + '</h2>' +
-                    '<h2>' + prop.text + '</h2>';
-                if(d == 'Science')
-                    popup += d + ':' + '<h2>' + prop.importance.Science + '</h2>';
-                else if(d == 'Sports')
-                    popup += d + ':' + '<h2>' + prop.importance.Sports + '</h2>';
-                else if(d == 'Health')
-                    popup += d + ':' + '<h2>' + prop.importance.Health + '</h2>';
+                var popup = "<h1>" + prop.name + "@" + prop.name + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
                 locale.on('click',function(e){
                     map.panTo(locale.getLatLng());
                 });
                 locale.bindPopup(popup);
                 locale.setIcon(L.mapbox.marker.icon({
-                    'marker-color':giveMeColor('Health',impor),
+                    'marker-color':giveMeColor(impor),
                     'marker-symbol':'circle-stroked',
-                    'marker-size':giveMeSize('Health',impor)
+                    'marker-size':giveMeSize(impor)
                 }));
 
             });
@@ -170,35 +219,10 @@ $(document).ready(function(){
 
 
         }
-        }
-    //ClusterLayers and GeoJson
-    //var clusterGroup = new L.MarkerClusterGroup();
+        }*/
+    
+    
 
-        /*.eachLayer(function(locale){
-            var prop = locale.feature.properties;
-            var impor = prop.importance;
-            var popup = '<h1>' + prop.name + '</h1>' + '<h2>' + prop.location + '</h2>' + '<h2>' + prop.time + '</h2>' +
-                '<h2>' + prop.text + '</h2>';
-            if(d == 'Science')
-                popup += d + ':' + '<h2>' + prop.importance.Science + '</h2>';
-            else if(d == 'Sports')
-                popup += d + ':' + '<h2>' + prop.importance.Sports + '</h2>';
-            else if(d == 'Health')
-                popup += d + ':' + '<h2>' + prop.importance.Health + '</h2>';
-            locale.on('click',function(e){
-                map.panTo(locale.getLatLng());
-            });
-            locale.bindPopup(popup);
-            locale.setIcon(L.mapbox.marker.icon({
-                'marker-color':giveMeColor(d,impor),
-                'marker-symbol':'circle-stroked',
-                'marker-size':giveMeSize(d,impor)
-            }))
-
-
-        });*/
-
-        //map.addLayer(clusterGroup);
 
     //GeoJson2
     /*var clusterGroup2 = new L.MarkerClusterGroup();
@@ -263,7 +287,7 @@ function showSomething(feature,layer){
 }
 
 //colors of gradient by the importance of the data
-function giveMeColor(domain, impor)
+function giveMeColor(impor)
 {
     var color = [
         '#0b321b',
@@ -275,62 +299,24 @@ function giveMeColor(domain, impor)
         '#27af61',
         '#2dc86f',
         '#33e17d',
-        '#39fb8b',
-        '#94fdc0'
+        '#39fb8b'
     ];
-    switch (domain)
-    {
-        case 'Science':
-            if(impor.Science > 1)
-                return color[10];
-            else
-                return color[parseInt(parseInt(impor.Science * 100) / 10)];
-        case 'Health':
-            if(impor.Health > 1)
-                return color[10];
-            else
-            return color[parseInt(parseInt(impor.Health * 100) / 10)];
-        case 'Sports':
-            if(impor.Sports > 1)
-                return color[10];
-            else
-            return color[parseInt(parseInt(impor.Sports * 100) / 10)];
-    }
+    return color[parseInt(parseInt(impor * 100) / 10)];
 }
 
 //size of gradient by the importance of the data
-function giveMeSize(domain , impor)
+function giveMeSize(impor)
 {
     var size = [
         'small',
         'medium',
         'large'
     ];
-    switch (domain)
-    {
-        case 'Science':
-            if(0 <= impor.Science && impor.Science < 0.33)
-                return size[0];
-            else if(0.33 <= impor.Science && impor.Science < 0.67)
-                return size[1];
-            else if(0.67 <= impor.Science)
-                return size[2];
-            break;
-        case 'Health':
-            if(0 <= impor.Health && impor.Health < 0.33)
-                return size[0];
-            else if(0.33 <= impor.Health && impor.Health < 0.67)
-                return size[1];
-            else if(0.67 <= impor.Health)
-                return size[2];
-            break;
-        case 'Sports':
-            if(0 <= impor.Sports && impor.Sports < 0.33)
-                return size[0];
-            else if(0.33 <= impor.Sports && impor.Sports < 0.67)
-                return size[1];
-            else if(0.67 <= impor.Sports)
-                return size[2];
-            break;
-    }
+
+    if(0 <= impor && impor < 0.33)
+        return size[0]
+    else if(0.33 <= impor && impor < 0.67)
+        return size[1]
+    else(0.67 <= impor)
+        return size[2]
 }

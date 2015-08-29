@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from pyquery import PyQuery as pq
 
 domains = ['Arts', 'Education', 'Health', 'Science', 'Sports']
+response_fields = ['web_url', 'abstract', 'headline', 'keywords', 'pub_date', 'word_count', 'section_name', 'subsection_name']
 
 BaseURI = 'http://api.nytimes.com/svc/search/v2/articlesearch.json'
 APIKey = 'd6e7999f5dee748975dac3228b6b5ddf:19:72790999'
@@ -40,11 +41,6 @@ class ArticleSearchEngine:
         f = urllib2.urlopen(req)
         return json.loads(f.read())['response']
 
-    # Filter and add docs in one response
-    # count: num of docs already added
-    def addDocs(self, docs, count):
-        pass
-
     #Search all specified domains separately for articles
     def searchAll(self):
         for domain in self.domains:
@@ -56,7 +52,7 @@ class ArticleSearchEngine:
         qparams = self.getInitialQParams(domain)
         response = self.getJsonResponse(qparams)
         n_hit = response['meta']['hits'] # num of result docs in total
-        count = self.addDocs(response['docs'], 0); end_date = self.end_date
+        count = self.addDocs(response['docs'], domain, 0); end_date = self.end_date
         # continue querying till enough docs are got
         while True:
             while qparams['page'] < n_hit / 10 and count < self.num_per_dm:
@@ -64,7 +60,7 @@ class ArticleSearchEngine:
                 qparams['page'] += 1
                 response = self.getJsonResponse(qparams)
                 assert page * 10 == response['meta']['offset']
-                count += self.addDocs(response['docs'], count)
+                count += self.addDocs(response['docs'], domain, count)
             if self.begin_date is not None or count >= self.num_per_dm:
                 break
             # modify date and restart query
@@ -73,7 +69,32 @@ class ArticleSearchEngine:
             qparams['begin_date'] = qparams['end_date'] = end_date.strftime("%y%m%d")
             response = self.getJsonResponse(qparams)
             n_hit = response['meta']['hits']
-            count += self.addDocs(response['docs'], count)
+            count += self.addDocs(response['docs'], domain, count)
+
+    # Filter and add docs in one response
+    # count: num of docs already added
+    def addDocs(self, docs, domain, count):
+        start_count = count
+        for doc in docs:
+            if doc['word_count'] < 200:
+                continue
+            self.saveDoc(new_doc, domain)
+            count += 1
+            if count == self.num_per_dm:
+                break
+        return count - start_count
+
+    def saveDoc(self, doc, domain):
+        new_doc = {}
+        new_doc['article'] = self.getFullArticle(doc['web_url'])
+        for field in response_fields:
+            new_doc[field] = doc[field]
+        f = open(doc['headline'] + '.json', 'w')
+        json.dump(new_doc, f)
+        f.close()
+
+    def getFullArticle(self, url):
+        article_page = pq(url = url, opener = lambda url, **kw: urllib2.urlopen(url).read())
 
 
 if __name__ == '__main__':
