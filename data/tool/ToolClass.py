@@ -1,32 +1,33 @@
 import os
 import math
-import json
+import json, codecs, re
 from string import punctuation
 from pymongo import MongoClient
 from nltk.corpus import stopwords
+from articlesearch import *
 
 class Article:
     'Article Class'
     def __init__(self, filepath, domain):
-        self.filepath = filepath
-        self.wordDic = {}
-        self.wordAmount = 0
+        f = codecs.open(filepath, 'r', 'utf-8')
+        self.doc = json.loads(f.read())
+        f.close()
         self.domain = domain
-        
-    def getTF(self):
-        f = open(self.filepath,'r')
-        for line in f.readlines():
-            line = "".join([c for c in line if c not in punctuation]) # remove all punctuation in line
-            vector = line.split(' ')
-            for i in range(len(vector)):
-                if(self.wordDic.has_key(vector[i])):
-                    self.wordDic[vector[i]] += 1.0
-                else:
-                    self.wordDic[vector[i]] = 1.0
-            self.wordAmount += len(vector)
-    
-        for key in self.wordDic.keys():
-            self.wordDic[key] /= self.wordAmount
+        self.wordCount = {}
+        self.n_words = self.countWords(self.doc['article'].lower())
+
+    def countWorlds(self, text):
+        wordMacher = re.compile(r'[a-z]+')
+        words = wordMacher.findall(text)
+        for w in words:
+            if w in self.wordCount
+                self.words[w] += 1
+            else
+                self.wordCount[w] = 1
+        return len(words)
+
+    def tf(self, word):
+        return float(self.wordCount.get(word, 0)) / self.n_words
     
     def sortDic(self):
         self.sortedWordList = sorted(self.wordDic.iteritems(),key=lambda d:d[1],reverse=True) # Dic sort
@@ -49,25 +50,49 @@ class Corpus:
     'Corpus Class'
     def __init__(self, rootdir):
         self.rootdir = rootdir
-        self.domain = os.listdir(self.rootdir)
-        self.corpus = []
+        self.domains = articlesearch.domains
+        self.corpus = {}
         for entry in self.domain:
-            for name in os.listdir(self.rootdir + '\\' + entry):
-                article = Article(self.rootdir + '\\' + entry + '\\' + name, entry)
-                self.corpus.append(article)
+            self.corpus[entry] = []
+            for name in os.listdir(self.rootdir + '/' + entry):
+                article = Article(self.rootdir + '/' + entry + '/' + name, entry)
+                self.corpus[entry].append(article)
+        self.docCount = {} # count for idf computation
+        self.n_docs = {}
+        self.tiTable = {} # tf-idf table
 
-    def calculateTF(self):
-        for i in range(len(self.corpus)):
-            self.corpus[i].getTF()
+    def countDocsOnWords(self):
+        docCount = {}
+        for d in domains:
+            self.n_docs[d] = 0
+            for article in self.corpus[d]:
+                self.n_docs[d] += 1
+                for w in article.wordCount:
+                    if w in docCount:
+                        docCount[w] += 1
+                    else:
+                        docCount[w] = 1
+        self.N = float(sum(n_docs.values())) # docs in total
+        # filter words that appear more than once
+        for w in docCount:
+            if docCount[w] > 1:
+                self.docCount[w] = docCount[w]
+
+    def idf(self, word):
+        return math.log(self.N / self.docCount[w])
     
     def calculateTFIDF(self):
-        for article in self.corpus:
-            for word in article.wordDic.keys():
-                count = 0
-                for i in range(len(self.corpus)):
-                    if(self.corpus[i].wordDic.has_key(word)):
-                        count += 1
-                article.wordDic[word] *= math.log(len(self.corpus) / count)
+        for w in self.docCount:
+            tiTable[w] = {}
+            for d in self.domains:
+                l = tiTable[w][d] = []
+                idf = idf(w)
+                for article in self.corpus[d]:
+                    l.append(article.tf(w) * idf)
+        # save table
+        f = codecs.open('tf-idf_table.json', 'w', 'utf-8')
+        json.dump(tiTable, f)
+        f.close()
 
     def getKeywords(self, count):
         for article in self.corpus:

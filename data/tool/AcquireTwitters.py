@@ -68,7 +68,7 @@ class GeoTweetsListener(StreamListener):
     # Override method that is called many times
     def on_data(self, data):
         JSONObject = json.loads(data)
-        if not JSONObject.has_key('coordinates') or JSONObject['coordinates'] is None:
+        if 'coordinates' not in JSONObject or JSONObject['coordinates'] is None:
             return
         self.add(JSONObject)
         ###return False
