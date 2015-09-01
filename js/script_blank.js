@@ -1,29 +1,35 @@
 $(document).ready(function(){
+    
     //initialize
-    var groups = []; // markerClusterGroups Array
-    var eventClusterGroup = null; // Events cluster group
-    var eventData = null; // Events data
-    var CurrentDay =  new Date();
-    var strYear1 = CurrentDay.getFullYear();
-    var strDay1 = CurrentDay.getDate();
-    var strMonth1 = CurrentDay.getMonth()+1;
-    if(strMonth1 < 10)
-    {
-        strMonth1 = "0" + strMonth1;
+    var CurrentDay =  new Date();    
+    var strYear1 = CurrentDay.getFullYear(); 
+    var strDay1 = CurrentDay.getDate(); 
+    var strMonth1 = CurrentDay.getMonth()+1;    
+    if(strMonth1 < 10) 
+    { 
+        strMonth1 = "0" + strMonth1; 
     }
-    var CurrentDayFormat = strYear1 + "-" + strMonth1 + "-" + strDay1;
+    if(0 <= strDay1 && strDay1 <= 9)
+    {
+        strDay1 = "0" + strDay1;
+    }
+    var CurrentDayFormat = strYear1 + "-" + strMonth1 + "-" + strDay1; 
 
     var LastDay = new Date();
-    var Last_milliseconds = CurrentDay.getTime()-1000*60*60*24;
-    LastDay.setTime(Last_milliseconds);
-    var strYear2 = LastDay.getFullYear();
-    var strDay2 = LastDay.getDate();
-    var strMonth2 = LastDay.getMonth()+1;
-    if(strMonth2 < 10)
-    {
-        strMonth2 = "0" + strMonth2;
+    var Last_milliseconds = CurrentDay.getTime()-1000*60*60*24; 
+    LastDay.setTime(Last_milliseconds); 
+    var strYear2 = LastDay.getFullYear(); 
+    var strDay2 = LastDay.getDate(); 
+    var strMonth2 = LastDay.getMonth()+1; 
+    if(strMonth2 < 10) 
+    { 
+        strMonth2 = "0" + strMonth2; 
     }
-    var LastDayFormat = strYear2 + "-" + strMonth2 + "-" + strDay2;
+    if(0 <= strDay2 && strDay2 <= 9)
+    {
+        strDay2 = "0" + strDay2;
+    }
+    var LastDayFormat = strYear2 + "-" + strMonth2 + "-" + strDay2; 
 
     $("#Geo-from").val(LastDayFormat);
     $("#Geo-to").val(CurrentDayFormat);
