@@ -1,5 +1,8 @@
 $(document).ready(function(){
     //initialize
+    var groups = []; // markerClusterGroups Array
+    var eventClusterGroup = null; // Events cluster group
+    var eventData = null; // Events data
     var CurrentDay =  new Date();
     var strYear1 = CurrentDay.getFullYear();
     var strDay1 = CurrentDay.getDate();
@@ -58,6 +61,18 @@ $(document).ready(function(){
         $(e.target).parent().addClass("active");
         FireEvents(e);
     });
+    
+    //Fade in/out events geoJson
+    $("#Geo-event").click(function(){
+        if($(this).hasClass("active")){
+            $(this).removeClass("active");
+            clearEventDataFromMap();
+        }
+        else{
+            $(this).addClass("active");
+            printEventDataToMap();
+        }
+    });
 
     function FireEvents(e)
     {
@@ -86,21 +101,25 @@ $(document).ready(function(){
             dataType:'json',
             data: params,
             success:function(data){
-                printDataToMap(data)
+                printTweetDataToMap(data.tweets);
+                eventData = data.events;
             },
             error:function(XMLHttpRequest, textStatus, errorThrown){
-                //alert(errorThrown);
+                alert(errorThrown);
             }
         });
     }
     
-    function printDataToMap(data)
+    function printTweetDataToMap(data)
     {
-        var geoJsonLayerX = L.mapbox.featureLayer();
-        geoJsonLayerX.setGeoJSON(data);
+        for(var i = 0; i != groups.length; i++)
+            groups[i].clearLayers();
+        groups = [];
+        tweetLayer = L.mapbox.featureLayer();
+        tweetLayer.setGeoJSON(data);
         
         function makeGroup(color) {
-            return new L.MarkerClusterGroup({
+            /*return new L.MarkerClusterGroup({
                 iconCreateFunction: function(cluster) {
                     return new L.DivIcon({
                         //iconUrl: "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png",
@@ -109,30 +128,41 @@ $(document).ready(function(){
                         //html: '<div style="text-align:center;backgroud:rgba(0,0,0,0.5)><img src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png">' + cluster.getChildCount() + '</div>'
                     });
                 }
+            }).addTo(map);*/
+                        
+            return new L.MarkerClusterGroup({
+                iconCreateFunction: function(cluster){
+                    return L.mapbox.marker.icon({
+                        'marker-symbol': cluster.getChildCount(),
+                        'marker-color': color,
+                        'marker-size': 'large'
+                    });
+                }
             }).addTo(map);
         }
         
         var color = [
-            '#320b12',
-            '#4b1144',
-            '#641664',
-            '#4c1c7d',
-            '#2b2296',
-            '#93bcd6',
-            '#279aaf',
-            '#3fc82d',
-            '#a5e133',
-            '#fbd639'
+            '#0b321b',
+            '#114b29',
+            '#166437',
+            '#1c7d45',
+            '#229653',
+            '#93d6af',
+            '#27af61',
+            '#2dc86f',
+            '#33e17d',
+            '#39fb8b'
         ];
-        var groups = [];
+        
         for(i = 0; i <= 9; i++)
             groups.push(makeGroup(color[i]));
         
-        geoJsonLayerX.eachLayer(function(layer){
+        tweetLayer.eachLayer(function(layer){
             var prop = layer.feature.properties;
             var impor = prop.importance;
             
-            groups[parseInt(impor*10)].addLayer(layer);
+            layer.addTo(groups[parseInt(impor*10)]);
+            //groups[parseInt(impor*10)].addLayer(layer);
             
             var popup = "<h1>" + prop.name + "@" + prop.name + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
                 
@@ -141,97 +171,22 @@ $(document).ready(function(){
             });
             layer.bindPopup(popup);
             layer.setIcon(L.mapbox.marker.icon({
-                    'marker-color':giveMeColor(impor),
-                    'marker-symbol':'circle-stroked',
-                    'marker-size':giveMeSize(impor)
+                    'marker-color':giveMeColor(impor)
+                    //'marker-symbol':'embassy'
+                    //'marker-size':giveMeSize(impor)
             }));
         });
-
-        
     }
-
-/*    function printDataToMap(data){
-        function makeGroup(tweets)
-        {
-            var f1 = new Array();
-
-            for(var i = 0; i <= 9; i++)
-                f1.push({"type":"FeatureCollection","features":[]});
-
-            for (var i = 0; i < tweets.features.length; i++)
-            {
-                var obj = tweets.features[i];
-                var impor =  obj.properties.importance;
-                f1[parseInt(impor * 10)].features.push(obj);
-            }
-            return f1;
-        };
-
-        var color = [
-            '#320b12',
-            '#4b1144',
-            '#641664',
-            '#4c1c7d',
-            '#2b2296',
-            '#93bcd6',
-            '#279aaf',
-            '#3fc82d',
-            '#a5e133',
-            '#fbd639'
-        ];
-        var clusterGroups = [];
-        for(var i = 0; i <= 9; i++)
-            clusterGroups[i] = new L.MarkerClusterGroup({
-                iconCreateFunction:function(cluster){
-                    return L.mapbox.marker.icon({
-                        'marker-symbol':cluster.getChildCount(),
-                        'marker-color':color[i-1],
-                        opacity:0.5
-                    });
-                }
-            });
-        var exam = makeGroup(data,"Health");
-        for(var i = 0; i <= 9; i++)
-        {
-            if(i > 6)
-            break;
-            var tweets = exam[i];
-            var geoJsonLayerX = L.mapbox.featureLayer();
-
-            geoJsonLayerX.setGeoJSON(tweets).addTo(clusterGroups[i]);
-            geoJsonLayerX.eachLayer(function(locale){
-                var prop = locale.feature.properties;
-                var impor = prop.importance;
-                var popup = "<h1>" + prop.name + "@" + prop.name + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
-                locale.on('click',function(e){
-                    map.panTo(locale.getLatLng());
-                });
-                locale.bindPopup(popup);
-                locale.setIcon(L.mapbox.marker.icon({
-                    'marker-color':giveMeColor(impor),
-                    'marker-symbol':'circle-stroked',
-                    'marker-size':giveMeSize(impor)
-                }));
-
-            });
-
-            map.addLayer(clusterGroups[i]);
-
-
-        }
-        }*/
     
-    
+    function printEventDataToMap()
+    {
+        eventClusterGroup = new L.MarkerClusterGroup();
 
+        var eventLayer = L.mapbox.featureLayer();
 
-    //GeoJson2
-    /*var clusterGroup2 = new L.MarkerClusterGroup();
+        eventLayerLayer.setGeoJSON(eventData).addTo(eventClusterGroup);
 
-    var geoJsonLayer2 = L.mapbox.featureLayer();
-
-        geoJsonLayer2.setGeoJSON(www).addTo(clusterGroup2);
-
-        geoJsonLayer2.eachLayer(function(locale){
+        eventLayerLayer.eachLayer(function(locale){
             var prop = locale.feature.properties;
             var popup = '<h1>'+ prop.type +'</h1>'+'<h2>'+prop.place+'</h2>';
             locale.on('click',function(e){
@@ -240,7 +195,15 @@ $(document).ready(function(){
             locale.bindPopup(popup);
         });
 
-        map.addLayer(clusterGroup2);*/
+        map.addLayer(eventClusterGroup);
+    }
+    
+    function clearEventDataFromMap()
+    {
+        if(eventClusterGroup != null)
+            eventClusterGroup.clearLayers();
+    }
+
 
 
     //VectorLayers and Draw Function

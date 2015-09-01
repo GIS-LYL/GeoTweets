@@ -50,6 +50,7 @@
                         <li><a href="#" id="Geo-new-domain2">new domain2</a></li>
                     </ul>
                 </li>
+                <li id="Geo-event"><a href="#">Events</a></li>
             </ul>
             <form class="navbar-form navbar-right" role="search" id="Geo-form">
                 <div class="form-group">
