@@ -1,6 +1,10 @@
 $(document).ready(function(){
     
     //initialize
+    var groups = []; // Tweets cluster group Array
+    var eventClusterGroup = null; // Events cluster group
+    var eventData = null; // Events data
+    //Date part
     var CurrentDay =  new Date();    
     var strYear1 = CurrentDay.getFullYear(); 
     var strDay1 = CurrentDay.getDate(); 
