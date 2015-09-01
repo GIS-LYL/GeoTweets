@@ -3,8 +3,8 @@ import math
 import json, codecs, re
 from string import punctuation
 from pymongo import MongoClient
-from nltk.corpus import stopwords
-from articlesearch import *
+#from nltk.corpus import stopwords
+from types import *
 
 class Article:
     'Article Class'
@@ -16,18 +16,18 @@ class Article:
         self.wordCount = {}
         self.n_words = self.countWords(self.doc['article'].lower())
 
-    def countWorlds(self, text):
+    def countWords(self, text):
         wordMacher = re.compile(r'[a-z]+')
         words = wordMacher.findall(text)
         for w in words:
-            if w in self.wordCount
-                self.words[w] += 1
-            else
+            if w in self.wordCount:
+                self.wordCount[w] += 1
+            else:
                 self.wordCount[w] = 1
-        return len(words)
+        return float(len(words))
 
     def tf(self, word):
-        return float(self.wordCount.get(word, 0)) / self.n_words
+        return self.wordCount.get(word, 0) / self.n_words
     
     def sortDic(self):
         self.sortedWordList = sorted(self.wordDic.iteritems(),key=lambda d:d[1],reverse=True) # Dic sort
@@ -48,11 +48,11 @@ class Article:
 
 class Corpus:
     'Corpus Class'
-    def __init__(self, rootdir):
+    def __init__(self, rootdir, domains):
         self.rootdir = rootdir
-        self.domains = articlesearch.domains
+        self.domains = domains
         self.corpus = {}
-        for entry in self.domain:
+        for entry in self.domains:
             self.corpus[entry] = []
             for name in os.listdir(self.rootdir + '/' + entry):
                 article = Article(self.rootdir + '/' + entry + '/' + name, entry)
@@ -63,7 +63,7 @@ class Corpus:
 
     def countDocsOnWords(self):
         docCount = {}
-        for d in domains:
+        for d in self.corpus:
             self.n_docs[d] = 0
             for article in self.corpus[d]:
                 self.n_docs[d] += 1
@@ -72,36 +72,50 @@ class Corpus:
                         docCount[w] += 1
                     else:
                         docCount[w] = 1
-        self.N = float(sum(n_docs.values())) # docs in total
+        self.N = float(sum(self.n_docs.values())) # docs in total
         # filter words that appear more than once
         for w in docCount:
             if docCount[w] > 1:
                 self.docCount[w] = docCount[w]
 
     def idf(self, word):
-        return math.log(self.N / self.docCount[w])
+        return math.log(self.N / self.docCount[word])
     
     def calculateTFIDF(self):
         for w in self.docCount:
-            tiTable[w] = {}
-            for d in self.domains:
-                l = tiTable[w][d] = []
-                idf = idf(w)
+            self.tiTable[w] = {}
+            for d in self.corpus:
+                l = self.tiTable[w][d] = []
+                idf = self.idf(w)
                 for article in self.corpus[d]:
                     l.append(article.tf(w) * idf)
         # save table
         f = codecs.open('tf-idf_table.json', 'w', 'utf-8')
-        json.dump(tiTable, f)
+        json.dump(self.tiTable, f)
         f.close()
 
     def getKeywords(self, count):
-        for article in self.corpus:
-            article.sortDic()
-            article.getKeywords(count)
-    
-    def display(self):
-        for article in self.corpus:
-            article.display()
+        keywords = {}
+        for d in self.corpus:
+            keywords[d] = sorted(
+                [(k, sum(v[d])) for (k, v) in self.tiTable.iteritems()],
+                key = lambda e: e[1],
+                reverse = True
+            )
+        return keywords
+
+    def display(self, domains = None, limit = 50):
+        if type(domains) is not list:
+            domains = self.corpus.keys()
+        count = 0
+        domains = set(domains) & set(self.corpus.keys())
+        for w in self.tiTable:
+            count += 1
+            print w, ':'
+            for d in domains:
+                print d + ':', self.tiTable[w][d]
+            if count == limit:
+                break
 
 class Twitter:
     'Twitter Class'
