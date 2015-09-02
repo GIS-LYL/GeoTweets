@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 from ToolClass import Corpus
-import sys
-from pymongo import MongoClient
 from articlesearch import *
+'''import sys
+from pymongo import MongoClient
 
 client = MongoClient()
-db = client.test
+db = client.test'''
 
 corpus = Corpus('..', domains)
 corpus.countDocsOnWords()
 corpus.calculateTFIDF()
 #corpus.display()
-keywords = corpus.getKeywords(100)
-#for d in keywords:
-#	print d + ':', keywords[d]
+keywords = corpus.getKeywords(1000)
 
 '''
 domainKeywords = {} # keywords related to domain

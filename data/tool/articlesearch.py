@@ -115,7 +115,7 @@ class ArticleSearchEngine:
         ### print url ###
         webpage = pq(url = url)
         article = webpage("article:first")
-        paras = article.children('div:first').children('p')
+        paras = article.children('div:first').find('p.story-body-text,.interactive-summary')
         content = unicode(paras) #.text()
         #paras.each(lambda idx: content.append(paras(':eq(%d)' % idx).text()))
         ### print content ###

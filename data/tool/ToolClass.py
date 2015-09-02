@@ -1,6 +1,6 @@
-import os
-import math
+import os, math
 import json, codecs, re
+from pyquery import PyQuery as pq
 from string import punctuation
 from pymongo import MongoClient
 #from nltk.corpus import stopwords
@@ -14,9 +14,10 @@ class Article:
         f.close()
         self.domain = domain
         self.wordCount = {}
-        self.n_words = self.countWords(self.doc['article'].lower())
-        if self.n_words == 0:
-            print filepath
+        self.n_words = self.countWords(
+            pq(self.doc['article'])('p').text().lower()
+        )
+        self.maxn = max(self.wordCount.values())
 
     def countWords(self, text):
         wordMacher = re.compile(r'[a-z]+')
@@ -29,8 +30,10 @@ class Article:
         return float(len(words))
 
     def tf(self, word):
-        return self.wordCount.get(word, 0) / self.n_words
-    
+        #return self.wordCount.get(word, 0) / self.n_words
+        k = 0.01
+        return k + (1 - k) * self.wordCount.get(word, 0) / self.n_words
+'''
     def sortDic(self):
         self.sortedWordList = sorted(self.wordDic.iteritems(),key=lambda d:d[1],reverse=True) # Dic sort
     
@@ -46,7 +49,8 @@ class Article:
         print 'wordAmount: %d' % self.wordAmount
         print 'Different words: %d' % len(self.wordDic.keys())
         for keyword in self.keywords:
-            print keyword
+            print keyword'''
+
 
 class Corpus:
     'Corpus Class'
@@ -104,8 +108,9 @@ class Corpus:
                 key = lambda e: e[1],
                 reverse = True
             )[:count]
+        json.dump(keywords, open('keywords.json', 'w'))
         return keywords
-
+'''
     def display(self, domains = None, limit = 50):
         if type(domains) is not list:
             domains = self.corpus.keys()
@@ -117,7 +122,8 @@ class Corpus:
             for d in domains:
                 print d + ':', self.tiTable[w][d]
             if count == limit:
-                break
+                break'''
+
 
 class Twitter:
     'Twitter Class'
