@@ -4,6 +4,8 @@ $(document).ready(function(){
     var groups = []; // Tweets cluster group Array
     var eventClusterGroup = null; // Events cluster group
     var eventData = null; // Events data
+    var tweetHeat = null; // Tweets heat map
+    var eventHeat = null; // Events heat map
     //Date part
     var CurrentDay =  new Date();    
     var strYear1 = CurrentDay.getFullYear(); 
@@ -83,6 +85,29 @@ $(document).ready(function(){
             printEventDataToMap();
         }
     });
+    
+    //Fade in/out heatmap
+    $("#Geo-tweetHeat").click(function(){
+        if($(this).hasClass("active")){
+            $(this).removeClass("active");
+            clearTweetHeatFromMap();
+        }
+        else{
+            $(this).addClass("active");
+            displayTweetHeatToMap();
+        }
+    });
+    
+    $("#Geo-eventHeat").click(function(){
+        if($(this).hasClass("active")){
+            $(this).removeClass("active");
+            clearEventHeatFromMap();
+        }
+        else{
+            $(this).addClass("active");
+            displayEventHeatToMap();
+        }
+    });
 
     function FireEvents(e)
     {
@@ -113,9 +138,11 @@ $(document).ready(function(){
             success:function(data){
                 printTweetDataToMap(data.tweets);
                 eventData = data.events;
+                //displayTweetHeatToMap(data.tweetsHeat);
+                displayEventHeatToMap(data.eventsHeat)
             },
             error:function(XMLHttpRequest, textStatus, errorThrown){
-                alert(errorThrown);
+                //alert(errorThrown);
             }
         });
     }
@@ -125,7 +152,7 @@ $(document).ready(function(){
         for(var i = 0; i != groups.length; i++)
             groups[i].clearLayers();
         groups = [];
-        tweetLayer = L.mapbox.featureLayer();
+        var tweetLayer = L.mapbox.featureLayer();
         tweetLayer.setGeoJSON(data);
         
         function makeGroup(color) {
@@ -166,14 +193,13 @@ $(document).ready(function(){
         
         for(i = 0; i <= 9; i++)
             groups.push(makeGroup(color[i]));
+        //alert(data.type);
         
         tweetLayer.eachLayer(function(layer){
             var prop = layer.feature.properties;
             var impor = prop.importance;
-            
-            layer.addTo(groups[parseInt(impor*10)]);
-            //groups[parseInt(impor*10)].addLayer(layer);
-            
+            groups[parseInt(impor*10)].addLayer(layer);
+            //alert(data.type);
             var popup = "<h1>" + prop.name + "@" + prop.name + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
                 
             layer.on('click',function(e){
@@ -186,17 +212,19 @@ $(document).ready(function(){
                     //'marker-size':giveMeSize(impor)
             }));
         });
+        //alert(data.type);
     }
     
     function printEventDataToMap()
     {
+        //alert(eventData.type);
         eventClusterGroup = new L.MarkerClusterGroup();
 
         var eventLayer = L.mapbox.featureLayer();
 
-        eventLayerLayer.setGeoJSON(eventData).addTo(eventClusterGroup);
+        eventLayer.setGeoJSON(eventData).addTo(eventClusterGroup);
 
-        eventLayerLayer.eachLayer(function(locale){
+        eventLayer.eachLayer(function(locale){
             var prop = locale.feature.properties;
             var popup = '<h1>'+ prop.type +'</h1>'+'<h2>'+prop.place+'</h2>';
             locale.on('click',function(e){
@@ -212,6 +240,55 @@ $(document).ready(function(){
     {
         if(eventClusterGroup != null)
             eventClusterGroup.clearLayers();
+    }
+    
+    //Heat map function
+    function displayTweetHeatToMap(data)
+    {
+        tweetHeat = L.heatLayer(data,{
+            maxzoom:17,
+            minOpacity:0.2,
+            max:1,
+            radius:25,
+            blur:10,
+            gradient:{
+                0.2: '#ffffb2',
+                0.4: '#fecc5c',
+                0.6: '#fd8d3c',
+                0.8: '#f03b20',
+                1.0: '#bd0026'
+            }
+        }).addTo(map);
+    }
+    
+    function displayEventHeatToMap(data)
+    {
+        eventHeat = L.heatLayer(data,{
+            maxzoom:17,
+            minOpacity:0.2,
+            max:1,
+            radius:25,
+            blur:10,
+            gradient:{
+                0.2: '#1debf0',
+                0.4: '#1dc0f0',
+                0.6: '#1dcbf0',
+                0.8: '#1d96f0',
+                1.0: '#1d56f0'
+            }
+        }).addTo(map);
+    }
+    
+    function clearTweetHeatFromMap()
+    {
+        if(tweetHeat != null)
+            tweetHeat.onRemove();
+    }
+    
+    function clearEventHeatFromMap()
+    {
+        if(eventHeat != null)
+            eventHeat.onRemove();
     }
 
 
@@ -238,7 +315,7 @@ $(document).ready(function(){
 
 
     //FileLayers and load files function
-    var style = {color:'red', opacity: 1.0, fillOpacity: 1.0, weight: 2, clickable: false,};
+    var style = {color:'red', opacity: 1.0, fillOpacity: 1.0, weight: 2, clickable: false};
 
         L.Control.FileLayerLoad.LABEL = '<i class="fa fa-folder-open"></i>';
 

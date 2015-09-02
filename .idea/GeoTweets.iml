@@ -11,5 +11,8 @@
     <orderEntry type="library" name="leaflet.markercluster" level="application" />
     <orderEntry type="library" name="mapbox" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="leaflet-heat" level="application" />
+    <orderEntry type="library" name="leaflet.markercluster" level="application" />
+    <orderEntry type="library" name="mapbox" level="application" />
   </component>
 </module>

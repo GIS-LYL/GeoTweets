@@ -10,9 +10,10 @@ db = client.test
 corpus = Corpus('..', domains)
 corpus.countDocsOnWords()
 corpus.calculateTFIDF()
-corpus.display()
-
-#corpus.getKeywords(3)
+#corpus.display()
+keywords = corpus.getKeywords(100)
+#for d in keywords:
+#	print d + ':', keywords[d]
 
 '''
 domainKeywords = {} # keywords related to domain

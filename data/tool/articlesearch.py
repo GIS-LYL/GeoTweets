@@ -99,6 +99,8 @@ class ArticleSearchEngine:
     def saveDoc(self, doc, domain):
         new_doc = {}
         new_doc['article'] = self.getFullArticle(doc['web_url'])
+        if new_doc['article'] == '':
+            print doc['word_count']
         for field in response_fields:
             new_doc[field] = doc[field]
         path = root_path + domain + '/'
@@ -113,7 +115,7 @@ class ArticleSearchEngine:
         ### print url ###
         webpage = pq(url = url)
         article = webpage("article:first")
-        paras = article.children('div:first').find('p')
+        paras = article.children('div:first').children('p')
         content = unicode(paras) #.text()
         #paras.each(lambda idx: content.append(paras(':eq(%d)' % idx).text()))
         ### print content ###

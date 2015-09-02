@@ -15,6 +15,8 @@ class Article:
         self.domain = domain
         self.wordCount = {}
         self.n_words = self.countWords(self.doc['article'].lower())
+        if self.n_words == 0:
+            print filepath
 
     def countWords(self, text):
         wordMacher = re.compile(r'[a-z]+')
@@ -82,17 +84,17 @@ class Corpus:
         return math.log(self.N / self.docCount[word])
     
     def calculateTFIDF(self):
+        idfTable = {}
         for w in self.docCount:
             self.tiTable[w] = {}
+            idf = idfTable[w] = self.idf(w)
             for d in self.corpus:
                 l = self.tiTable[w][d] = []
-                idf = self.idf(w)
                 for article in self.corpus[d]:
                     l.append(article.tf(w) * idf)
         # save table
-        f = codecs.open('tf-idf_table.json', 'w', 'utf-8')
-        json.dump(self.tiTable, f)
-        f.close()
+        json.dump(self.tiTable, open('tf-idf_table.json', 'w'))
+        json.dump(idfTable, open('idf_table.json', 'w'))
 
     def getKeywords(self, count):
         keywords = {}
@@ -101,7 +103,7 @@ class Corpus:
                 [(k, sum(v[d])) for (k, v) in self.tiTable.iteritems()],
                 key = lambda e: e[1],
                 reverse = True
-            )
+            )[:count]
         return keywords
 
     def display(self, domains = None, limit = 50):

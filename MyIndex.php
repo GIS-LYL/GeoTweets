@@ -30,39 +30,46 @@
 <body>
 
 <nav class="navbar navbar-default" id="Geo-navbar">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="https://github.com/GIS-LYL/GeoTweets">GeoTweets</a>
-        </div>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="https://github.com/GIS-LYL/GeoTweets">GeoTweets</a>
+    </div>
 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Link <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu" id="Geo-domain">
                 <li><a href="https://github.com/GIS-LYL">LYL</a></li>
                 <li><a href="http://www.usc.edu/">USC</a></li>
                 <li><a href="http://spatial.usc.edu/">Spatial Science</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Domain <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu" id="Geo-domain">
-                        <li class="active"><a href="#" id="Geo-health">Health</a></li>
-                        <li><a href="#" id="Geo-sports">Sports</a></li>
-                        <li><a href="#" id="Geo-history">History</a></li>
-                        <li><a href="#" id="Geo-new-domain1">new domain1</a></li>
-                        <li><a href="#" id="Geo-new-domain2">new domain2</a></li>
-                    </ul>
-                </li>
-                <li id="Geo-event"><a href="#">Events</a></li>
             </ul>
-            <form class="navbar-form navbar-right" role="search" id="Geo-form">
-                <div class="form-group">
-                    <input type="date" class="form-control" id="Geo-from">
-                    <input type="date" class="form-control" id="Geo-to">
-                </div>
-                <button type="button" class="btn btn-default" id="Geo-submit">Submit</button>
-            </form>
-        </div>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Domain <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" id="Geo-domain">
+            <li class="active"><a href="#" id="Geo-health">Health</a></li>
+            <li><a href="#" id="Geo-sports">Sports</a></li>
+            <li><a href="#" id="Geo-history">History</a></li>
+            <li><a href="#" id="Geo-new-domain1">new domain1</a></li>
+            <li><a href="#" id="Geo-new-domain2">new domain2</a></li>
+          </ul>
+        </li>
+        <li id="Geo-event"><a href="#">Events</a></li>
+        <li id="Geo-tweetHeat"><a href="#">TweetsHeat</a></li>
+        <li id="Geo-eventHeat"><a href="#">EventsHeat</a></li>
+      </ul>
+        <form class="navbar-form navbar-right" role="search" id="Geo-form">
+            <div class="form-group">
+              <input type="date" class="form-control" id="Geo-from">
+              <input type="date" class="form-control" id="Geo-to">
+            </div>
+            <button type="button" class="btn btn-default" id="Geo-submit">Submit</button>
+        </form>
     </div>
+  </div>
 </nav>
-
+    
 <div id = "map"></div>
 
 <!--jQuery-->
@@ -87,6 +94,10 @@
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
 <script src='http://makinacorpus.github.io/Leaflet.FileLayer/leaflet.filelayer.js'></script>
 <script src='http://makinacorpus.github.io/Leaflet.FileLayer/togeojson/togeojson.js'></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
+<script src="http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+
+
 
 </body>
 </html>
