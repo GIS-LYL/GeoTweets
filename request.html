@@ -8,17 +8,28 @@
     <script>
         $( "button" ).click( function() {
             $.ajax({
-                type: "post",
+                method: "post",
                 url: "GetTweets.php",
                 dataType: "html",
                 data: {
-                    east: 1,
-                    south: 2,
-                    west: 3,
-                    north: 4
+                    east: -66.885444,
+                    south: 24.396308,
+                    west: -124.848974,
+                    north: 49.384358,
+                    domain: 'Health',
+                    startTime: '2015-08-01',
+                    endTime: '2015-10-01'
                 },
                 success: function( data, status ) {
-                    $( "div" ).html( data );
+                    $( "div" ).html( data );/*
+                    $.ajax({
+                        method: "get",
+                        url: data,
+                        dataType: "html",
+                        success: function( data, status ) {
+                            $( "div" ).html( data );
+                        }
+                    });/**/
                 }
             });
         });

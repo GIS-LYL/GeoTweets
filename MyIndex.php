@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Link <span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu" id="Geo-domain">
+            <ul class="dropdown-menu" role="menu">
                 <li><a href="https://github.com/GIS-LYL">LYL</a></li>
                 <li><a href="http://www.usc.edu/">USC</a></li>
                 <li><a href="http://spatial.usc.edu/">Spatial Science</a></li>
@@ -48,11 +48,11 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Domain <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu" id="Geo-domain">
-            <li class="active"><a href="#" id="Geo-health">Health</a></li>
+            <li class="active"><a href="#" id="Geo-arts">Arts</a></li>
+              <li><a href="#" id="Geo-education">Education</a></li>
+              <li><a href="#" id="Geo-health">Health</a></li>
+              <li><a href="#" id="Geo-science">Science</a></li>
             <li><a href="#" id="Geo-sports">Sports</a></li>
-            <li><a href="#" id="Geo-history">History</a></li>
-            <li><a href="#" id="Geo-new-domain1">new domain1</a></li>
-            <li><a href="#" id="Geo-new-domain2">new domain2</a></li>
           </ul>
         </li>
         <li id="Geo-tweet"><a href="#">Tweets</a></li>

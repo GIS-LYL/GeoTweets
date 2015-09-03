@@ -127,51 +127,75 @@ class Corpus:
 
 class Twitter:
     'Twitter Class'
-    def __init__(self, JSONObject):
-        self.json = JSONObject
-        self.text = JSONObject['text']
-        self.dic = {}
-        self.wordAmount = 0.0
-        self.TFIDF = {}
+    def __init__(self, doc):
+        self.doc = doc
+        self.wordCount = {}
+        self.countWords()
+        self.importance = {}
     
-    def getTF(self):
-        text = "".join([c for c in self.text if c not in punctuation]) # remove all punctuation in self.text
-        vector = text.split(' ')
-        for i in range(len(vector)):
-            if(self.dic.has_key(vector[i])):
-                self.dic[vector[i]] += 1.0
+    def countWords(self):
+        for w in self.doc['words']:
+            if w in self.wordCount:
+                self.wordCount[w] += 1
             else:
-                self.dic[vector[i]] = 1.0
-        self.wordAmount += len(vector)
-        
-        for key in self.dic.keys():
-            self.dic[key] /= self.wordAmount
+                self.wordCount[w] = 1
+
+    def calculateImportance(self, keywords, normelem):
+        dcount = {}
+        for domain in keywords:
+            self.importance[domain] = 0
+            dcount[domain] = 0
+        for w in self.wordCount:
+            count = self.wordCount[w]
+            for d in keywords:
+                impor = keywords[d].get(w, None)
+                if impor is not None:
+                    self.importance[d] += impor * count
+                    dcount[d] += count
+        for domain in self.importance:
+            if dcount[domain] != 0:
+                self.importance[domain] /= (dcount[domain] * normelem)
+
+    def addImportanceTo(self, collection):
+        for d in self.importance:
+            if self.importance[d] > 0:
+                collection.insert_one({
+                    'id': self.doc['_id'],
+                    'domain': d,
+                    'importance': self.importance[d]
+                })
+
+
 
 class TwitterList:
     def __init__(self):
         self.twitterList = []
         self.client = MongoClient()
         self.db = self.client.test
-        self.collection = self.db.Twitter
-        cursor = self.collection.find()
+        self.twitterCollection = self.db.twitters
+        self.imporCollection = self.db.importances
+        cursor = self.twitterCollection.find()
         for document in cursor:
             JSONObject = document
             twitter = Twitter(JSONObject)
             self.twitterList.append(twitter)
-            
-    def calculateTF(self):
-        for twitter in self.twitterList:
-            twitter.getTF()
-            
-    def calculateTFIDF(self):
-        for twitter in self.twitterList:
-            for word in twitter.dic.keys():
-                count = 0
-                for i in range(len(self.twitterList)):
-                    if(self.twitterList[i].dic.has_key(word)):
-                        count += 1
-                twitter.dic[word] *= math.log(len(self.twitterList) / count)
 
+    def loadKeywords(self, filename):
+        self.keywords = json.loads(open(filename, 'r').read())
+        weight = []
+        for d in self.keywords:
+            weight.append(self.keywords[d][0][1])
+            self.keywords[d] = dict(self.keywords[d])
+        self.weight = max(weight)
+
+    def calculateImportance(self):
+        for twitter in self.twitterList:
+            twitter.calculateImportance(self.keywords, self.weight)
+
+    def addImportanceToDB(self):
+        for twitter in self.twitterList:
+            twitter.addImportanceTo(self.imporCollection)
+'''
     def getCorrelation(self, domain, keywords):
         for twitter in self.twitterList:
             twitter.TFIDF[domain] = 0
@@ -219,4 +243,4 @@ class DataTransformer:
             if amount != 0:
                 self.data += ','
         self.data += ']}'
-        return self.data
+        return self.data'''

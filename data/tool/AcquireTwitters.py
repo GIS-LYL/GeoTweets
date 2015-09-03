@@ -71,6 +71,8 @@ class GeoTweetsListener(StreamListener):
         JSONObject = json.loads(data)
         if 'coordinates' not in JSONObject or JSONObject['coordinates'] is None:
             return
+        if JSONObject['lang'] != 'en':
+            return
         self.add(JSONObject)
         ###return False
         if self.dataAmount == 1000:

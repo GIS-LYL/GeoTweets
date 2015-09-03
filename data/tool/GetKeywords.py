@@ -11,7 +11,7 @@ corpus = Corpus('..', domains)
 corpus.countDocsOnWords()
 corpus.calculateTFIDF()
 #corpus.display()
-keywords = corpus.getKeywords(1000)
+keywords = corpus.getKeywords(10000)
 
 '''
 domainKeywords = {} # keywords related to domain

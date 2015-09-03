@@ -51,7 +51,7 @@ $(document).ready(function(){
     var map = L.mapbox.map('map', 'tweetsyoulike.mpo7h6lm',{
             minzoom: 2,
             maxzoom: 14
-        }).setView([12.15147921044203, 125.15157530234822],8);
+        }).setView([40.188366, -96.839084],4);
 
         L.control.layers({
             'Streets':L.mapbox.tileLayer('mapbox.streets').addTo(map),
@@ -145,8 +145,10 @@ $(document).ready(function(){
             east: bounds.getEast(),
             north: bounds.getNorth()
         };
+        //alert(params.domain + ' ' + params.startTime + ' ' + params.endTime);
+        //alert(params.west + ' ' + params.north + ' ' + params.east + ' ' + params.south);
         $.ajax({
-            type:'post',
+            method:'POST',
             url:'GetTweets.php',
             dataType:'json',
             data: params,
@@ -160,7 +162,7 @@ $(document).ready(function(){
                 eventHeat = data.eventsHeat;
             },
             error:function(XMLHttpRequest, textStatus, errorThrown){
-                //alert(errorThrown);
+                alert(errorThrown);
             }
         });
     }
