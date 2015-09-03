@@ -2,6 +2,7 @@
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler, Stream
 from pymongo import MongoClient
+from datetime import datetime as dt
 import json, re
 
 #Variables that contains the user credentials to access Twitter API 
@@ -41,7 +42,7 @@ class GeoTweetsListener(StreamListener):
             for item in jsonObj['entities']['media']:
                 mediaURLs.append(item['media_url'])
         document = {
-            'created_at': jsonObj['created_at'],
+            'created_at': dt.fromtimestamp(int(jsonObj['timestamp_ms']) / 1000.0),
             'id': jsonObj['id_str'],
             'text': jsonObj['text'],
             'user': {
@@ -58,7 +59,7 @@ class GeoTweetsListener(StreamListener):
             #},
             'media_urls': mediaURLs,
             ###'filter_level': jsonObj['filter_level'],
-            'timestamp_ms': jsonObj['timestamp_ms'],
+            #'timestamp_ms': jsonObj['timestamp_ms'],
             'words': words
         }
         ###print document

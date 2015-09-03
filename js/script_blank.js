@@ -1,10 +1,13 @@
 $(document).ready(function(){
     
     //initialize
-    var groups = []; // Tweets cluster group Array
+    var tweetData = null; //Tweet data
+    var tweetClusterGroups = []; // Tweets cluster group Array
     var eventClusterGroup = null; // Events cluster group
     var eventData = null; // Events data
+    var tweetHeatLayer = null;
     var tweetHeat = null; // Tweets heat map
+    var eventHeatLayer = null;
     var eventHeat = null; // Events heat map
     //Date part
     var CurrentDay =  new Date();    
@@ -75,6 +78,18 @@ $(document).ready(function(){
     });
     
     //Fade in/out events geoJson
+    $("#Geo-tweet").click(function(){
+        if($(this).hasClass("active")){
+            $(this).removeClass("active");
+            clearTweetDataFromMap();
+        }
+        else{
+            $(this).addClass("active");
+            printTweetDataToMap();
+        }
+    });
+    
+    //Fade in/out events geoJson
     $("#Geo-event").click(function(){
         if($(this).hasClass("active")){
             $(this).removeClass("active");
@@ -113,7 +128,7 @@ $(document).ready(function(){
     {
         //Time
         var startTimeInput = $("#Geo-from").val();
-        var endTimeInput = $("Geo-to").val();
+        var endTimeInput = $("#Geo-to").val();
 
         //Bounds
         var bounds = map.getBounds();
@@ -136,10 +151,13 @@ $(document).ready(function(){
             dataType:'json',
             data: params,
             success:function(data){
-                printTweetDataToMap(data.tweets);
+                clearTweetDataFromMap();
+                tweetData = data.tweets;
+                printTweetDataToMap();
+                $("#Geo-tweet").addClass("active");
                 eventData = data.events;
-                //displayTweetHeatToMap(data.tweetsHeat);
-                displayEventHeatToMap(data.eventsHeat)
+                tweetHeat = data.tweetsHeat;
+                eventHeat = data.eventsHeat;
             },
             error:function(XMLHttpRequest, textStatus, errorThrown){
                 //alert(errorThrown);
@@ -147,13 +165,10 @@ $(document).ready(function(){
         });
     }
     
-    function printTweetDataToMap(data)
+    function printTweetDataToMap()
     {
-        for(var i = 0; i != groups.length; i++)
-            groups[i].clearLayers();
-        groups = [];
         var tweetLayer = L.mapbox.featureLayer();
-        tweetLayer.setGeoJSON(data);
+        tweetLayer.setGeoJSON(tweetData);
         
         function makeGroup(color) {
             /*return new L.MarkerClusterGroup({
@@ -192,13 +207,13 @@ $(document).ready(function(){
         ];
         
         for(i = 0; i <= 9; i++)
-            groups.push(makeGroup(color[i]));
+            tweetClusterGroups.push(makeGroup(color[i]));
         //alert(data.type);
         
         tweetLayer.eachLayer(function(layer){
             var prop = layer.feature.properties;
             var impor = prop.importance;
-            groups[parseInt(impor*10)].addLayer(layer);
+            tweetClusterGroups[parseInt(impor*10)].addLayer(layer);
             //alert(data.type);
             var popup = "<h1>" + prop.name + "@" + prop.name + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
                 
@@ -213,6 +228,13 @@ $(document).ready(function(){
             }));
         });
         //alert(data.type);
+    }
+    
+    function clearTweetDataFromMap()
+    {
+        for(var i = 0; i != tweetClusterGroups.length; i++)
+            tweetClusterGroups[i].clearLayers();
+        tweetClusterGroups = [];
     }
     
     function printEventDataToMap()
@@ -243,11 +265,11 @@ $(document).ready(function(){
     }
     
     //Heat map function
-    function displayTweetHeatToMap(data)
+    function displayTweetHeatToMap()
     {
-        tweetHeat = L.heatLayer(data,{
+        tweetHeatLayer = L.heatLayer(tweetHeat,{
             maxzoom:17,
-            minOpacity:0.2,
+            minOpacity:0.4,
             max:1,
             radius:25,
             blur:10,
@@ -261,11 +283,11 @@ $(document).ready(function(){
         }).addTo(map);
     }
     
-    function displayEventHeatToMap(data)
+    function displayEventHeatToMap()
     {
-        eventHeat = L.heatLayer(data,{
+        eventHeatLayer = L.heatLayer(eventHeat,{
             maxzoom:17,
-            minOpacity:0.2,
+            minOpacity:0.4,
             max:1,
             radius:25,
             blur:10,
@@ -281,14 +303,14 @@ $(document).ready(function(){
     
     function clearTweetHeatFromMap()
     {
-        if(tweetHeat != null)
-            tweetHeat.onRemove();
+        if(tweetHeatLayer != null)
+            tweetHeatLayer.onRemove(map);
     }
     
     function clearEventHeatFromMap()
     {
-        if(eventHeat != null)
-            eventHeat.onRemove();
+        if(eventHeatLayer != null)
+            eventHeatLayer.onRemove(map);
     }
 
 

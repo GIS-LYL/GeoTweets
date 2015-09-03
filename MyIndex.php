@@ -55,6 +55,7 @@
             <li><a href="#" id="Geo-new-domain2">new domain2</a></li>
           </ul>
         </li>
+        <li id="Geo-tweet"><a href="#">Tweets</a></li>
         <li id="Geo-event"><a href="#">Events</a></li>
         <li id="Geo-tweetHeat"><a href="#">TweetsHeat</a></li>
         <li id="Geo-eventHeat"><a href="#">EventsHeat</a></li>

@@ -58,18 +58,20 @@ for i in range(0, 100):
     tfea = copy.deepcopy(tfeature)
     tfea['properties']['importance'] = random.random()
     coordi = []
-    coordi.append(tfeature['geometry']['coordinates'][0] + (random.random() - 0.5) * 10)
     coordi.append(tfeature['geometry']['coordinates'][1] + (random.random() - 0.5) * 10)
-    tfea['geometry']['coordinates'] = copy.copy(coordi)
+    coordi.append(tfeature['geometry']['coordinates'][0] + (random.random() - 0.5) * 10)
+    tfea['geometry']['coordinates'][0] = coordi[1]
+    tfea['geometry']['coordinates'][1] = coordi[0]
     tweetGeo['features'].append(tfea)
     coordi.append(tfea['properties']['importance'])
     data['tweetsHeat'].append(coordi)
 
     efea = copy.deepcopy(efeature)
     coordi = []
-    coordi.append(efeature['geometry']['coordinates'][0] + (random.random() - 0.5) * 10)
     coordi.append(efeature['geometry']['coordinates'][1] + (random.random() - 0.5) * 10)
-    efea['geometry']['coordinates'] = copy.copy(coordi)
+    coordi.append(efeature['geometry']['coordinates'][0] + (random.random() - 0.5) * 10)
+    efea['geometry']['coordinates'][0] = coordi[1]
+    efea['geometry']['coordinates'][1] = coordi[0]
     eventGeo['features'].append(efea)
     coordi.append(1)
     data['eventsHeat'].append(coordi)
