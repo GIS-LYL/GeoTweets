@@ -7,7 +7,7 @@ from pymongo import MongoClient
 client = MongoClient()
 db = client.test'''
 
-corpus = Corpus('..', domains)
+corpus = Corpus('..', Domains)
 corpus.countDocsOnWords()
 corpus.calculateTFIDF()
 #corpus.display()

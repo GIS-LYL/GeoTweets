@@ -8,16 +8,16 @@ from datetime import date, timedelta
 from pyquery import PyQuery as pq
 
 root_path = '../' # store articles here
-domains = ['Arts', 'Education', 'Health', 'Science', 'Sports']
 response_fields = ['web_url', 'abstract', 'headline', 'keywords', 'pub_date', 'word_count', 'section_name', 'subsection_name']
 
+Domains = ['Arts', 'Education', 'Health', 'Science', 'Sports']
 BaseURI = 'http://api.nytimes.com/svc/search/v2/articlesearch.json'
 APIKey = 'd6e7999f5dee748975dac3228b6b5ddf:19:72790999'
 
 class ArticleSearchEngine:
     # Init this engine
     def __init__(self, domains, num_per_dm = float('inf'), end_date = date.today(), begin_date = None):
-        self.domains = domains
+        self.domains = Domains
         self.num_per_dm = num_per_dm # required num of articles per domain
         self.end_date = end_date
         self.begin_date = begin_date
