@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
-from ToolClass import Corpus
-from articlesearch import *
-'''import sys
+from ToolClass import Article,Corpus
+import sys
 from pymongo import MongoClient
 
 client = MongoClient()
-db = client.test'''
+db = client.test
+Domain = db.Domain
 
-corpus = Corpus('..', Domains)
-corpus.countDocsOnWords()
+corpus = Corpus('C:\\Users\\tianyi\\workspace\\GeoTweets\\Tool\\Articles')
+corpus.calculateTF()
 corpus.calculateTFIDF()
-#corpus.display()
-keywords = corpus.getKeywords(10000)
+corpus.getKeywords(3) # get n keywords from each article
 
-'''
 domainKeywords = {} # keywords related to domain
 for article in corpus.corpus:
     if domainKeywords.has_key(article.domain) == False:
@@ -25,4 +23,3 @@ for domain in domainKeywords.keys():
     Domain.insert_one({"domain":domain,"keywords":domainKeywords[domain]})
 
 print 'finished'
-'''

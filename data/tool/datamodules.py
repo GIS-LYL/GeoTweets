@@ -1,10 +1,11 @@
 import os, math
 import json, codecs, re
 from pyquery import PyQuery as pq
-from string import punctuation
 from pymongo import MongoClient
 #from nltk.corpus import stopwords
 from types import *
+
+Domains = ['Arts', 'Education', 'Health', 'Science', 'Sports']
 
 class Article:
     'Article Class'
@@ -33,23 +34,6 @@ class Article:
         #return self.wordCount.get(word, 0) / self.n_words
         k = 0.01
         return k + (1 - k) * self.wordCount.get(word, 0) / self.n_words
-'''
-    def sortDic(self):
-        self.sortedWordList = sorted(self.wordDic.iteritems(),key=lambda d:d[1],reverse=True) # Dic sort
-    
-    def getKeywords(self, count):
-        self.keywords = []
-        for word in self.sortedWordList:
-            if word[0].lower() not in set(stopwords.words('english')):
-                self.keywords.append(word[0])
-                if len(self.keywords) == count:
-                    break
-    
-    def display(self):
-        print 'wordAmount: %d' % self.wordAmount
-        print 'Different words: %d' % len(self.wordDic.keys())
-        for keyword in self.keywords:
-            print keyword'''
 
 
 class Corpus:
@@ -97,8 +81,8 @@ class Corpus:
                 for article in self.corpus[d]:
                     l.append(article.tf(w) * idf)
         # save table
-        json.dump(self.tiTable, open('tf-idf_table.json', 'w'))
-        json.dump(idfTable, open('idf_table.json', 'w'))
+        #json.dump(self.tiTable, open('tf-idf_table.json', 'w'))
+        #json.dump(idfTable, open('idf_table.json', 'w'))
 
     def getKeywords(self, count):
         keywords = {}
@@ -110,19 +94,6 @@ class Corpus:
             )[:count]
         json.dump(keywords, open('keywords.json', 'w'))
         return keywords
-'''
-    def display(self, domains = None, limit = 50):
-        if type(domains) is not list:
-            domains = self.corpus.keys()
-        count = 0
-        domains = set(domains) & set(self.corpus.keys())
-        for w in self.tiTable:
-            count += 1
-            print w, ':'
-            for d in domains:
-                print d + ':', self.tiTable[w][d]
-            if count == limit:
-                break'''
 
 
 class Twitter:
@@ -195,52 +166,3 @@ class TwitterList:
     def addImportanceToDB(self):
         for twitter in self.twitterList:
             twitter.addImportanceTo(self.imporCollection)
-'''
-    def getCorrelation(self, domain, keywords):
-        for twitter in self.twitterList:
-            twitter.TFIDF[domain] = 0
-            for keyword in keywords:
-                if twitter.dic.has_key(keyword):
-                    twitter.TFIDF[domain] += twitter.dic[keyword]
-        #self.twitterList.sort(key=lambda x:x.TFIDF,reverse=True) # List sorted by TFIDF 
-
-    def updateToDatabase(self):
-        for twitter in self.twitterList:
-            result = self.collection.update_one({"_id":twitter.json['_id']},{"$set":{"importance":twitter.TFIDF}})
-            if result.matched_count != 1:
-                return False
-        return True
-
-    def display(self):
-        for twitter in self.twitterList:
-            print twitter.TFIDF
-
-class DataTransformer:
-    def __init__(self):
-        self.client = MongoClient()
-        self.db = self.client.test
-        self.collection = self.db.Twitter
-        self.data = ""
-    
-    def toJson(self):
-        self.data += '{"type":"FeatureCollection","id":"tweetsyoulike.c22ab257","features":['
-        cursor = self.collection.find()
-        amount = self.collection.count()
-        for document in cursor:
-            dic = {}
-            dic['type'] = 'Feature'
-            dic['id'] = str(document['_id'])
-            dic['geometry'] = {'coordinates':document['coordinates'], 'type':'Point'}
-            dic['properties'] = {'id':str(document['_id']), 'time':document['created_at'], 
-                                 'name':document['name'], 'text':document['text'], 
-                                 'location':document['location'], 'media_url':document['media_url'], 
-                                 'marker-size':'medium', 'marker-color':'#7ec9b1', 'marker-symbol':'3',
-                                 'importance':document['importance']}
-            tmp = str(json.dumps(dic))
-            self.data += tmp
-            
-            amount -= 1
-            if amount != 0:
-                self.data += ','
-        self.data += ']}'
-        return self.data'''

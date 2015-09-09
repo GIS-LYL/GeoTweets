@@ -149,7 +149,7 @@ $(document).ready(function(){
         //alert(params.west + ' ' + params.north + ' ' + params.east + ' ' + params.south);
         $.ajax({
             method:'POST',
-            url:'GetTweets.php',
+            url:'DataRequest.php',
             dataType:'json',
             data: params,
             success:function(data){
@@ -217,7 +217,7 @@ $(document).ready(function(){
             var impor = prop.importance;
             tweetClusterGroups[parseInt(impor*10)].addLayer(layer);
             //alert(data.type);
-            var popup = "<h1>" + prop.name + "@" + prop.name + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
+            var popup = "<h1>" + prop.name + "@" + prop.location + "</h1><p>" + prop.text + "</p> <p><a href=" + prop.media_url + "></a></p><h2>" + prop.location + "</h2>" + "<h2>" + impor +"</h2>";
                 
             layer.on('click',function(e){
                     map.panTo(layer.getLatLng());
@@ -250,7 +250,8 @@ $(document).ready(function(){
 
         eventLayer.eachLayer(function(locale){
             var prop = locale.feature.properties;
-            var popup = '<h1>'+ prop.type +'</h1>'+'<h2>'+prop.place+'</h2>';
+            var popup = '<a href="'+prop.url+'"><h1>'+ prop.title +'</h1></a>'+'<p><h2>'+prop.venue+'</h2></p>'
+                +'<p>Location: '+prop.location+'</p>'+'<p>Description: '+prop.description+'</p>';
             locale.on('click',function(e){
                 map.panTo(locale.getLatLng());
             });

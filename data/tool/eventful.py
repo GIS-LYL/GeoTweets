@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import urllib, urllib2, time
 from datetime import date, timedelta, datetime
 from pymongo import MongoClient
-from articlesearch import Domains
+from datamodules import Domains
 
 AppKey = 'sPzLhSbLMsXN9s8w'
 ApiMethod = 'http://api.eventful.com/rest/events/search'

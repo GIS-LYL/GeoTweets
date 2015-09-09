@@ -1,3 +1,4 @@
+# Ramdomly generates data
 import json, random, copy
 
 data = {

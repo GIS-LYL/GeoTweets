@@ -6,11 +6,11 @@ import urllib2, urllib, os
 import json, codecs, time
 from datetime import date, timedelta
 from pyquery import PyQuery as pq
+from datamodules import Domains
 
 root_path = '../' # store articles here
 response_fields = ['web_url', 'abstract', 'headline', 'keywords', 'pub_date', 'word_count', 'section_name', 'subsection_name']
 
-Domains = ['Arts', 'Education', 'Health', 'Science', 'Sports']
 BaseURI = 'http://api.nytimes.com/svc/search/v2/articlesearch.json'
 APIKey = 'd6e7999f5dee748975dac3228b6b5ddf:19:72790999'
 

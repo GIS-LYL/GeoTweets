@@ -1,12 +1,10 @@
-from ToolClass import TwitterList
-#from pymongo import MongoClient
+from ToolClass import Twitter,TwitterList
+from pymongo import MongoClient
 
 twitters = TwitterList()
-twitters.loadKeywords('keywords.json')
-twitters.calculateImportance()
-twitters.addImportanceToDB()
+twitters.calculateTF()
+twitters.calculateTFIDF()
 
-'''
 client = MongoClient()
 db = client.test
 Domain = db.Domain
@@ -17,4 +15,3 @@ for document in cursor:
 res = twitters.updateToDatabase()
 if res:
     print 'finished'
-'''
