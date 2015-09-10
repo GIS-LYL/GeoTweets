@@ -1,4 +1,11 @@
 <?php
+$symbols = [
+    'Arts' => 'museum',
+    'Education' => 'college',
+    'Health' => 'dentist',
+    'Science' => 'chemist',
+    'Sports' => 'soccer'
+];
 /*$_POST['south'] = '24.396308';
 $_POST['north'] = '49.384358';
 $_POST['east'] = '-66.885444';
@@ -98,6 +105,8 @@ foreach ($cursor as $event) {
         'type' => 'Feature',
         'id' => null,
         'properties' => [
+            'marker-symbol' => $symbols[$domain],
+            'marker-color' => '#ff8080',
             'title' => $event['title'],
             'time' => $event['start_time'],
             'description' => $event['description'],

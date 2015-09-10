@@ -195,7 +195,7 @@ $(document).ready(function(){
             }).addTo(map);
         }
         
-        var color = [
+        /*var color = [
             '#0b321b',
             '#114b29',
             '#166437',
@@ -206,6 +206,18 @@ $(document).ready(function(){
             '#2dc86f',
             '#33e17d',
             '#39fb8b'
+        ];*/
+        var color = [
+            '#ceedc2',
+            '#aed8a1',
+            '#b0eaa4',
+            '#8dd186',
+            '#6ac96c',
+            '#41ab5d',
+            '#238b45',
+            '#006d2c',
+            '#00441b',
+            '#0b321b'
         ];
         
         for(i = 0; i <= 9; i++)
@@ -242,7 +254,15 @@ $(document).ready(function(){
     function printEventDataToMap()
     {
         //alert(eventData.type);
-        eventClusterGroup = new L.MarkerClusterGroup();
+        eventClusterGroup = new L.MarkerClusterGroup({
+            iconCreateFunction: function(cluster){
+                    return L.mapbox.marker.icon({
+                        'marker-symbol': cluster.getChildCount(),
+                        'marker-color': '#ff8080',
+                        'marker-size': 'large'
+                    });
+                }
+        });
 
         var eventLayer = L.mapbox.featureLayer();
 
@@ -301,6 +321,13 @@ $(document).ready(function(){
                 0.8: '#1d96f0',
                 1.0: '#1d56f0'
             }
+            /*gradient:{
+                0.2: '#fcc5c0',
+                0.4: '#f768a1',
+                0.6: '#dd3497',
+                0.8: '#ae017e',
+                1.0: '#7a0177'
+            }*/
         }).addTo(map);
     }
     
@@ -364,7 +391,7 @@ function showSomething(feature,layer){
 //colors of gradient by the importance of the data
 function giveMeColor(impor)
 {
-    var color = [
+    /*var color = [
         '#0b321b',
         '#114b29',
         '#166437',
@@ -375,6 +402,18 @@ function giveMeColor(impor)
         '#2dc86f',
         '#33e17d',
         '#39fb8b'
+    ];*/
+    var color = [
+        '#ceedc2',
+        '#aed8a1',
+        '#b0eaa4',
+        '#8dd186',
+        '#6ac96c',
+        '#41ab5d',
+        '#238b45',
+        '#006d2c',
+        '#00441b',
+        '#0b321b'
     ];
     return color[parseInt(parseInt(impor * 100) / 10)];
 }
